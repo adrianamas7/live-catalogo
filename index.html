@@ -361,7 +361,15 @@ function render(prods){
   prods.forEach((p,i)=>{
     const c=document.createElement('div');
     c.className='pcard';c.style.transitionDelay=(i%12*32)+'ms';c.onclick=()=>openProduct(p);
-    const img1=p.images[0]||'',img2=p.images[1]||img1;
+    // Pick image matching active color filter
+    let img1=p.images[0]||'',img2=p.images[1]||img1;
+    if(filterCol!=='all'){
+      const matchEntry=Object.entries(p.colors).find(([n])=>n.toLowerCase().includes(filterCol));
+      if(matchEntry&&matchEntry[1].imgs&&matchEntry[1].imgs[0]){
+        img1=matchEntry[1].imgs[0];
+        img2=matchEntry[1].imgs[1]||img1;
+      }
+    }
     const sale=p.compare>p.price;
     const badge=sale?'<span class="bdg bdg-sale">Oferta</span>':(i<6?'<span class="bdg bdg-new">Nuevo</span>':'');
     const ph=sale?`<span class="was">$${p.compare.toFixed(0)}</span>$${p.price.toFixed(0)}`:`$${p.price.toFixed(0)}`;
